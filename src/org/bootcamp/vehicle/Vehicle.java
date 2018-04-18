@@ -1,4 +1,4 @@
-package org.bootcamp.model;
+package org.bootcamp.vehicle;
 
 public abstract class Vehicle {
 

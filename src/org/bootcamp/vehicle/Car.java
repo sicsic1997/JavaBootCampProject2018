@@ -1,6 +1,6 @@
-package org.bootcamp.model;
+package org.bootcamp.vehicle;
 
-public final class Car extends Vehicle{
+public final class Car extends Vehicle {
 
     private String transmission;
 

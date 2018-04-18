@@ -1,4 +1,4 @@
-package org.bootcamp.model;
+package org.bootcamp.vehicle;
 
 public final class Bus extends Vehicle {
 
