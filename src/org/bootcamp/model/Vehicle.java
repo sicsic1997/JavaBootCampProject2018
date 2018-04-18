@@ -6,10 +6,6 @@ public abstract class Vehicle {
     private long numberOfMiles;
     private boolean isDiesel;
 
-    public int calculateInsurance() {
-        return 0;
-    }
-
     protected Vehicle() {
     }
 
