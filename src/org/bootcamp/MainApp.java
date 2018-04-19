@@ -1,61 +1,49 @@
 package org.bootcamp;
 
 import org.bootcamp.calculator.InsurancePolicyCalculator;
+import org.bootcamp.dao.VehicleDao;
+import org.bootcamp.dao.VehicleInfoPlainFileDao;
 import org.bootcamp.formula.Formula;
+import org.bootcamp.model.VehicleInfo;
 import org.bootcamp.vehicle.Bus;
 import org.bootcamp.vehicle.Car;
 import org.bootcamp.vehicle.Tipper;
 import org.bootcamp.vehicle.Vehicle;
 
 import java.io.*;
-import java.text.Normalizer;
+import java.util.List;
 import java.util.Scanner;
 
 public class MainApp {
 
-    final static String SEPARATOR = ";";
-    final static int VEHICLE_ID = 0;
-    final static int VEHICLE_TYPE = 1;
-    final static int VEHICLE_NAME = 2;
-    final static int VEHICLE_AGE = 3;
-    final static int VEHICLE_MILES = 4;
-    final static int VEHICLE_IS_DIESEL = 5;
-    final static String OUTPUT_FORMAT = "Vehicle with id %s has total cost %d";
+    static final InsurancePolicyCalculator calculator = InsurancePolicyCalculator.INSTANCE;
+    private static final String OUTPUT_FORMAT = "Vehicle with id %s has total cost %d";
 
-    public static void main(String args[]) {
+    public static void main(String args[]) throws IOException {
 
-        final InsurancePolicyCalculator calculator = InsurancePolicyCalculator.INSTANCE;
+        final VehicleDao vehicleDao = new VehicleInfoPlainFileDao(args[0]);
+        List<VehicleInfo> vehicleInfoList = vehicleDao.getAllVehicles();
 
-        if(args.length >= 1) {
-            final File inputFile = new File(args[0]);
-            try {
-                final InputStream inputStream = new FileInputStream(inputFile);
-                final Scanner scanner = new Scanner(inputFile);
-
-                while (scanner.hasNext()) {
-
-                    final String line = scanner.nextLine();
-                    final String[] tokens = line.split(SEPARATOR);
-                    Vehicle vehicle = getVehicle(
-                            tokens[VEHICLE_TYPE],
-                            Integer.parseInt(tokens[VEHICLE_AGE]),
-                            Long.parseLong(tokens[VEHICLE_MILES]),
-                            Boolean.parseBoolean(tokens[VEHICLE_IS_DIESEL]));
-                    final Formula formula = Formula.valueOf(tokens[VEHICLE_NAME]);
-                    final int totalCost = calculator.calculate(vehicle, formula);
-                    final String output = String.format(OUTPUT_FORMAT, tokens[VEHICLE_ID], totalCost);
-                    System.out.println(output);
-
-                }
-
-                scanner.close();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        if(vehicleInfoList.isEmpty()) {
+            System.err.println("No records found");
+            return;
         } else {
-            System.out.println("No arguments");
+            for(VehicleInfo info: vehicleInfoList) {
+
+                final Vehicle vehicle = getVehicle(
+                        info.getVehicleTypeName(),
+                        info.getAge(),
+                        info.getNumberOfMiles(),
+                        info.isDiesel()
+                );
+                final Formula formula = Formula.valueOf(info.getVehicleTypeFormula());
+                final int totalCost = calculator.calculate(vehicle, formula);
+                final String output = String.format(OUTPUT_FORMAT, info.getId(), totalCost);
+                System.out.println(output);
+
+            }
         }
+
 
     }
 
@@ -64,9 +52,7 @@ public class MainApp {
         final String carClassName = Car.class.getSimpleName().toUpperCase();
         final String busClassName = Bus.class.getSimpleName().toUpperCase();
         final String tippperClassName = Tipper.class.getSimpleName().toUpperCase();
-
         Vehicle vehicle = null;
-
 
         if(vehicleName.equals(carClassName)) {
             vehicle = new Car();
