@@ -5,15 +5,14 @@ import org.bootcamp.dao.VehicleDao;
 import org.bootcamp.dao.VehicleInfoPlainFileDao;
 import org.bootcamp.formula.Formula;
 import org.bootcamp.model.VehicleInfo;
-import org.bootcamp.vehicle.Bus;
-import org.bootcamp.vehicle.Car;
-import org.bootcamp.vehicle.Tipper;
 import org.bootcamp.vehicle.Vehicle;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static org.bootcamp.service.ConversionUtils.getVehicle;
 
 public final class InsuranceCalculatorService {
 
@@ -52,33 +51,5 @@ public final class InsuranceCalculatorService {
         return calculationResultList;
 
     };
-
-    private static Vehicle getVehicle(String vehicleName, int age, long numberOfMiles, boolean isDiesel) throws IOException {
-
-        final String carClassName = Car.class.getSimpleName().toUpperCase();
-        final String busClassName = Bus.class.getSimpleName().toUpperCase();
-        final String tippperClassName = Tipper.class.getSimpleName().toUpperCase();
-        Vehicle vehicle = null;
-
-        if(vehicleName.equals(carClassName)) {
-            vehicle = new Car();
-        }
-        if(vehicleName.equals(busClassName)) {
-            vehicle = new Bus();
-        }
-        if(vehicleName.equals(tippperClassName)) {
-            vehicle = new Tipper();
-        }
-        if(vehicle == null) {
-            return null;
-        }
-
-        vehicle.setAge(age);
-        vehicle.setDiesel(isDiesel);
-        vehicle.setNumberOfMiles(numberOfMiles);
-
-        return vehicle;
-    }
-
 
 }
